@@ -80,8 +80,8 @@
         if (!password.value)
             setValidationInElement(password, "is-invalid", "Password name is empty");
 
-        let loginFormat = '/(\D){4}/g';
-        let passwordFormat = '/([a-zA-Z0-9]){7,}/g';
+        let loginFormat = /(\D){4}/g;
+        let passwordFormat = /([a-zA-Z0-9]){7,}/g;
         let isValidLoginFormat = loginFormat.test(userLogin.value);
         let isValidPasswordFormat = passwordFormat.test(password.value);
 

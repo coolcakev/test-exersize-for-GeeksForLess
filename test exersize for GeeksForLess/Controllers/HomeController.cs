@@ -7,22 +7,28 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using test_exersize_for_GeeksForLess.Models;
+using test_exersize_for_GeeksForLess.Models.HomeModels;
+using test_exersize_for_GeeksForLess.Services;
 
 namespace test_exersize_for_GeeksForLess.Controllers
-{
-    [Authorize]
+{ 
     public class HomeController : Controller
     {
+        private readonly IHomeService _homeService;
         private readonly ILogger<HomeController> _logger;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, IHomeService homeService)
         {
             _logger = logger;
+            _homeService = homeService;
         }
 
         public IActionResult Index()
         {
-            return View();
+            var model = new HomeIndexModel();
+            _homeService.FillIndexModel(model);
+
+            return View(model);
         }
 
         public IActionResult Privacy()

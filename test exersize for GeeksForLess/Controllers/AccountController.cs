@@ -8,7 +8,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using test_exersize_for_GeeksForLess.Models.AccountModels;
-using test_exersize_for_GeeksForLess.Services.Account;
+using test_exersize_for_GeeksForLess.Services;
 
 namespace test_exersize_for_GeeksForLess.Controllers
 {

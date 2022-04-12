@@ -12,7 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using test_exersize_for_GeeksForLess.Commands;
-using test_exersize_for_GeeksForLess.Services.Account;
+using test_exersize_for_GeeksForLess.Services;
 
 namespace test_exersize_for_GeeksForLess
 {
@@ -38,6 +38,8 @@ namespace test_exersize_for_GeeksForLess
                 options.LoginPath = new Microsoft.AspNetCore.Http.PathString("/Account/Login");
             });
             services.AddScoped<IAccountAuthenticateService, AccountAuthenticateService>();
+            services.AddScoped<IHomeService, HomeService>();
+            services.AddScoped<ITopicService, TopicService>();
             services.AddScoped<IAccountAuthenticateCommand, AccountAuthenticateCommand>();
         }
 

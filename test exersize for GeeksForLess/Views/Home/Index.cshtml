@@ -1,8 +1,92 @@
-﻿@{
+﻿@model test_exersize_for_GeeksForLess.Models.HomeModels.HomeIndexModel
+@{
     ViewData["Title"] = "Home Page";
+    var checkForAuthenthification = User.Identity.IsAuthenticated;
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div id="PlaceForTopic" class="text-center">
+    @foreach (var topic in Model.Topics)
+    {
+        <div >           
+          <a href="@Url.Action("Index","Topic",new { topicId=topic.Id})"><h2>@topic.Title</h2></a>  
+            <p>@topic.Body</p>
+        </div>
+    }
 </div>
+@if (checkForAuthenthification)
+{
+    <div id="CreateTopic">
+        <div class="form-group">
+            <label for="registerLogin">Login</label>
+            <input id="Title" placeholder="Title" style=" display: block; width: 100%;" type="text" oninput="clearValid(this)" />
+            <div class="invalid-feedback" style="display:block">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="registerLogin">Login</label>
+            <textarea id="Body" style="width:100%;margin-top:20px" placeholder="Body" oninput="clearValid(this)"></textarea>
+            <div class="invalid-feedback" style="display:block">
+            </div>
+        </div>
+
+        <div style="display: flex; flex-direction: row-reverse;">
+            <button type="button" class="btn btn-primary" onclick="createTopic()">Create</button>
+        </div>
+    </div>
+}
+
+<script>
+    function validateTopic(title, topic) {
+        if (title.value == "")
+            setValidationInElement(title, "is-invalid", "Title is emtpy");
+
+        if (topic.value == "")
+            setValidationInElement(title, "is-invalid", "Topic is emtpy");
+    }
+    function createTopicElement(topic, currentUrlTopic) {
+        let placeForElement = document.getElementById("PlaceForTopic");
+        let topicElement = document.createElement("div")
+        let templateForContentOfTopic =
+            `<a href="${currentUrlTopic}"><h2>${topic.title}</h2></a>
+            <p>${topic.body}</p>`
+        topicElement.innerHTML = templateForContentOfTopic
+        placeForElement.appendChild(topicElement)
+    }
+    function createTopic() {
+        let title = document.getElementById("Title");
+        let body = document.getElementById("Body");
+
+        validateTopic(title, body);
+
+        let dialogModel = "CreateTopic";
+        let idInputs = getIdInput(dialogModel);
+
+        var functionSome = Array.prototype.some;
+        var isCorrect = functionSome.call(idInputs, function (item) {
+            let element = document.getElementById(item);
+            return element.classList.contains("is-invalid");
+        });
+
+        if (isCorrect)
+            return;
+
+        let model = {
+            Title: title.value,
+            Body: body.value
+        }
+        title.value=""
+        body.value=""
+        $.ajax({
+            type: "POST",
+            url: "/Topic/Create",
+            data: JSON.stringify(model),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                createTopicElement(data.topic, data.currentUrlTopic)
+            },
+
+        });
+    }
+
+</script>

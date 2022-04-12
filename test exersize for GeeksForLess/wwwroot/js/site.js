@@ -37,5 +37,9 @@ function checkConfirmPassword(args, elementPassword) {
         return;
     }
     setValidationInElement(currentInput, "is-valid", "");
-
+}
+function clearValid(element) {
+    element.classList.remove("is-valid");
+    element.classList.remove("is-invalid");
+    element.closest(".form-group").querySelector(".invalid-feedback").innerHTML = "";
 }

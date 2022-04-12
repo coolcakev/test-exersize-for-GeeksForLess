@@ -1,0 +1,21 @@
+﻿@model test_exersize_for_GeeksForLess.Models.TopicModels.IndexTopicModel
+@{
+    ViewData["Title"] = "Index";
+}
+
+<div>
+    <h2>@Model.Topic.Title</h2>
+    <p>@Model.Topic.Body</p>
+</div>
+<br />
+<div>
+    @foreach (var post in Model.Topic.Posts)
+    {
+        <div>
+            <h2>@post.User.UserLogin</h2>
+            <p>@post.Body</p>
+            <p>@post.CreateDateTime</p>
+        </div>
+    }
+</div>
+

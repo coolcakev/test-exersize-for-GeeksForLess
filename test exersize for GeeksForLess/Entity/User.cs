@@ -9,7 +9,9 @@ namespace test_exersize_for_GeeksForLess.Entity
     {
         public int Id { get; set; }
         public string UserLogin { get; set; }
-        public string  Password { get; set; }      
+        public string  Password { get; set; }
+        public IEnumerable<Post> Posts { get; set; }
+        public IEnumerable<Topic> Topics { get; set; }
 
     }
 }
