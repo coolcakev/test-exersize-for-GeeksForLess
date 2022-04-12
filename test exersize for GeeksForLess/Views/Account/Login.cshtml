@@ -1,0 +1,43 @@
+﻿@model test_exersize_for_GeeksForLess.Models.AccountModels.LoginAccountModel
+@{
+    Layout = "AccountLayout";
+}
+
+<main>
+    <div class="login-page py-5">
+        <div class="container">
+            <div class="text-center">
+                <a href="#">
+                    <img class="d-block mx-auto mb-4" src="https://getbootstrap.com/docs/4.0/assets/brand/bootstrap-solid.svg" alt="" width="48" height="48">
+                </a>
+                <h1 class="h2">Войти</h1>
+                <p class="mb-4">С возвращением</p>
+            </div>
+            <div class="row">
+                <div class="col-md-6 offset-md-3">
+                    <form asp-action="Login" asp-controller="Account" enctype="multipart/form-data">
+                        <div class="form-group">
+                            <label for="loginName">Login</label>
+                            <input type="text" class="form-control" id="loginName" name="userLogin">
+                        </div>
+                        <div class="form-group mb-4">
+                            <label for="loginPassword">Password</label>
+                            <input type="password" class="form-control" id="loginPassword" name="password">
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block mb-4" id="loginSubmit">Enter</button>
+                        <div class="d-flex justify-content-center">
+                            <p>
+                                Еще нет аккаунта? <a href="/Account/Register"
+                                                     class=""><u>Register</u></a>
+                            </p>
+                        </div>
+                        <div class="form-group" style="color:red;text-align: center;margin-top: 10px;">
+                            <p>@Model.ValidationMessage</p>
+                        </div>
+                    </form>
+               
+                </div>
+            </div>
+        </div>
+    </div>
+</main>

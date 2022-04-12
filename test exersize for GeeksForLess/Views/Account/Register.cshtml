@@ -1,0 +1,128 @@
+﻿
+@model test_exersize_for_GeeksForLess.Models.AccountModels.RegisterAccountModel
+@{
+    Layout = "AccountLayout";
+}
+
+<main>
+    <div class="register-page py-5">
+        <div class="container">
+            <div class="text-center">
+                <a href="#">
+                    <img class="d-block mx-auto mb-4" src="https://getbootstrap.com/docs/4.0/assets/brand/bootstrap-solid.svg" alt="" width="48" height="48">
+                </a>
+                <h1 class="h2">Присоединяйтесь</h1>
+                <div class="d-flex justify-content-center">
+                    <p class="mb-4">
+                        Уже зарегистрированы? <a href="/Account/Login" class=""><u>Enter</u></a>
+                    </p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 offset-md-3">
+                    <div id="RegisterAccountModel" class="wd-100p">
+                       
+                        <div class="form-group">
+                            <label for="registerLogin">Login</label>
+                            <input type="text" class="form-control" id="UserLogin" placeholder="">
+                            <div class="invalid-feedback" style="display:block">
+                            </div>
+                        </div>
+                        <div class="form-group mb-4">
+                            <label for="registerPassword">Password</label>
+                            <input type="password" class="form-control" id="Password">
+                            <div class="invalid-feedback" style="display:block">
+                            </div>
+                        </div>
+                        <div class="form-group mb-4">
+                            <label for="registerPassword">Confirm password</label>
+                            <input type="password" class="form-control" id="ConfirmPassword" oninput="checkValidConfirmPassword(this)">
+                            <div class="invalid-feedback" style="display:block">
+                            </div>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block mb-4"
+                            id="registerSubmit" onclick="validationFunction()">
+                        <div class="invalid-feedback" style="display:block">
+                        </div>
+                        Register
+                    </button>        
+
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+
+<script>
+    function checkValidConfirmPassword(element) {
+        checkConfirmPassword(element, "Password");
+    }
+    function validationFunction() {
+
+        
+        let userLogin = document.getElementById("UserLogin");
+        let password = document.getElementById("Password");
+        let confirmPassword = document.getElementById("ConfirmPassword");
+
+        let dialogModel = "RegisterAccountModel";
+        let idInputs = getIdInput(dialogModel);
+
+        setValidationInElement(userLogin, "is-valid", "");
+        setValidationInElement(password, "is-valid", "");
+        setValidationInElement(confirmPassword, "is-valid", "");
+
+
+
+        if (!userLogin.value)
+            setValidationInElement(userLogin, "is-invalid", "First name is empty");
+        if (!password.value)
+            setValidationInElement(password, "is-invalid", "Password name is empty");
+
+        let loginFormat = '/(\D){4}/g';
+        let passwordFormat = '/([a-zA-Z0-9]){7,}/g';
+        let isValidLoginFormat = loginFormat.test(userLogin.value);
+        let isValidPasswordFormat = passwordFormat.test(password.value);
+
+        if (!isValidLoginFormat)
+            setValidationInElement(userLogin, "is-invalid", "Введите только цифры и буквы и/или начинайте логин только с буквы");
+
+        if (!isValidPasswordFormat)
+            setValidationInElement(password, "is-invalid", "Неправильный формат электронной почты");
+
+        if (password.value != confirmPassword.value || confirmPassword.value=="")
+            setValidationInElement(confirmPassword, "is-invalid", "Passwords do not match");
+
+        var functionSome = Array.prototype.some;
+        var isCorrect = functionSome.call(idInputs, function (item) {
+            let element = document.getElementById(item);
+            return element.classList.contains("is-invalid");
+        });
+
+        if (isCorrect)
+            return;
+
+        let userAccountModel = {          
+            UserLogin: userLogin.value,
+            Password: password.value,
+            ConfirmPassword: confirmPassword.value,
+        }
+        $.ajax({
+            type: "POST",
+            url: "/Account/Register",
+            data: JSON.stringify(userAccountModel),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                if (data.redirectToUrl == undefined) {
+                    setVailidation(data, idInputs);
+                    return;
+                }
+                window.location.href = data.redirectToUrl;
+            },
+            async: false,
+        });
+
+    }
+</script>
