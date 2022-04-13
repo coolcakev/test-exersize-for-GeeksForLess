@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -21,7 +22,7 @@ namespace test_exersize_for_GeeksForLess.Services
 
         public void FillIndexModel(HomeIndexModel model)
         {
-            model.Topics = _repository.Topics;
+            model.Topics = _repository.Topics.Include(x=>x.User).Include(x=>x.Posts);
         }
     }
 }

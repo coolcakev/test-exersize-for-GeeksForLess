@@ -1,4 +1,8 @@
-﻿<!doctype html>
+﻿@{
+    var userName = User.FindFirst(x => x.Type == "UserLogin")?.Value;
+
+}
+<!doctype html>
 <html lang="ru">
 
 <head>
@@ -16,6 +20,7 @@
     <title>Страница логина</title>
 </head>
 <body>
+
     @RenderBody()
 </body>
 </html>

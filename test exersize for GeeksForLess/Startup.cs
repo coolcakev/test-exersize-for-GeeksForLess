@@ -40,6 +40,7 @@ namespace test_exersize_for_GeeksForLess
             services.AddScoped<IAccountAuthenticateService, AccountAuthenticateService>();
             services.AddScoped<IHomeService, HomeService>();
             services.AddScoped<ITopicService, TopicService>();
+            services.AddScoped<IPostService, PostService>();
             services.AddScoped<IAccountAuthenticateCommand, AccountAuthenticateCommand>();
         }
 

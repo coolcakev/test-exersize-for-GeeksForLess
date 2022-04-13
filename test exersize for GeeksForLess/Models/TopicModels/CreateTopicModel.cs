@@ -18,7 +18,8 @@ namespace test_exersize_for_GeeksForLess.Models.TopicModels
     {
         public Topic Topic { get; set; }
         public string CurrentUrlTopic { get; set; }
-     
+        public string CreationDate { get; set; }
+
 
     }
 

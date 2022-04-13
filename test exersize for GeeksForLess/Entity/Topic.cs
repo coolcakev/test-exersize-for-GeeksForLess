@@ -13,5 +13,6 @@ namespace test_exersize_for_GeeksForLess.Entity
         public IEnumerable<Post> Posts { get; set; }
         public User User { get; set; }
         public int UserId { get; set; }
+        public DateTime CreationDate { get; set; }
     }
 }

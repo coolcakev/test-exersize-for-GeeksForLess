@@ -24,13 +24,13 @@
                        
                         <div class="form-group">
                             <label for="registerLogin">Login</label>
-                            <input type="text" class="form-control" id="UserLogin" placeholder="">
+                            <input type="text" class="form-control" id="UserLogin" placeholder="" oninput="clearValid(this)">
                             <div class="invalid-feedback" style="display:block">
                             </div>
                         </div>
                         <div class="form-group mb-4">
                             <label for="registerPassword">Password</label>
-                            <input type="password" class="form-control" id="Password">
+                            <input type="password" class="form-control" id="Password" oninput="clearValid(this)">
                             <div class="invalid-feedback" style="display:block">
                             </div>
                         </div>

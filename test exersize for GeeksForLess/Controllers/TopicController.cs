@@ -37,7 +37,17 @@ namespace test_exersize_for_GeeksForLess.Controllers
             var responceModel = new ResponceCreateTopicModel();
             responceModel.Topic = topic;
             responceModel.CurrentUrlTopic = Url.Action("Index",new { topicId = topic.Id});
+            responceModel.CreationDate = topic.CreationDate.ToString("dd MMMM yyyy");
             return Ok(responceModel);
+        }
+        [HttpPost]
+        public async Task<IActionResult> Update([FromBody] UpdateTopicModel model)
+        {
+            var isValidUpdate =await _topicService.Update(model);
+            if (!isValidUpdate)            
+                return NotFound();
+            
+            return Ok(model);
         }
     }
 }

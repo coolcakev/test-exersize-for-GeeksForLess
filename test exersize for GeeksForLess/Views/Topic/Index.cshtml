@@ -1,21 +1,271 @@
 ﻿@model test_exersize_for_GeeksForLess.Models.TopicModels.IndexTopicModel
 @{
     ViewData["Title"] = "Index";
+    var userId = User.FindFirst(x => x.Type == "UserId")?.Value;
+    var username = User.FindFirst(x => x.Type == "UserLogin")?.Value;
+    var isAuthor = false;
+    if (userId != null)
+    {
+        isAuthor = int.Parse(userId) == Model.Topic.UserId;
+    }
+    var checkForAuthenthification = User.Identity.IsAuthenticated;
+
 }
+<input id="TopicId" value="@Model.Topic.Id" hidden />
 
 <div>
-    <h2>@Model.Topic.Title</h2>
-    <p>@Model.Topic.Body</p>
-</div>
-<br />
-<div>
-    @foreach (var post in Model.Topic.Posts)
+    <h2 id="textTitle">@Model.Topic.Title</h2>
+    <p id="textBody">@Model.Topic.Body</p>
+    @if (isAuthor)
     {
-        <div>
-            <h2>@post.User.UserLogin</h2>
-            <p>@post.Body</p>
-            <p>@post.CreateDateTime</p>
-        </div>
+        <button style="float: right;margin-bottom: 15px;" data-toggle="modal" data-target="#dialogUpdate" class="btn btn-primary" id="buttonUpdateOpen" onclick="updateTopicOpen()">Update</button>
     }
 </div>
+<hr style="clear: both;" />
+@if (checkForAuthenthification)
+{
+    <div id="CreatePost" style="width: 70%;margin: 0 auto;">
+        <div class="form-group">
+            <label for="registerLogin">@username</label>
+            <textarea id="BodyCreate" class="form-control" style="width:100%;" placeholder="Enter message" oninput="clearValid(this)"></textarea>
+            <div class="invalid-feedback" style="display:block">
+            </div>
+        </div>
+
+        <div style="display: flex; flex-direction: row-reverse;">
+            <button type="button" class="btn btn-primary" onclick="createPost()">Create</button>
+        </div>
+    </div>
+}
+<div id="PlaceForTopic">
+    @foreach (var post in Model.Topic.Posts)
+    {
+        <div class="b-comment">
+            <div postId="@post.Id" class="comment">
+                <div class="b-post-author ">
+                    <h4 id="TextUserLoginPost" class="avatar">
+                        @post.User.UserLogin
+                    </h4>
+                    <p class="comment-link" id="TextDatePost">@post.CreateDateTime.ToString("dd/MM/yyyy, H:mm")</p>
+                </div>
+
+                <div class="comment_text b-typo"><p id="TextBodyPost">@post.Body</p></div>
+                @if (userId != null && int.Parse(userId) == post.UserId)
+                {
+                    <button style="float: right; margin-bottom: 15px;" data-toggle="modal" data-target="#dialogUpdatePost" class="btn btn-primary" id="buttonUpdatePostOpen" onclick="updatePostOpen({id:`@post.Id`,body:`@post.Body`})">Update</button>
+                }
+            </div>
+        
+        </div>
+
+    }
+</div>
+@*Update Topic*@
+<div class="modal fade" tabindex="-1" id="dialogUpdate" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="card card-waves">
+                <div class="card-header">
+                    Update Topic
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div class="datatable">
+                        <div class="row">
+                            <div id="UpdateTopic" class="col-lg-12">
+                                <div class="form-group">
+                                    <label for="registerLogin">Title</label>
+                                    <input class="form-control" id="Title" value="@Model.Topic.Title" placeholder="Title" style=" display: block; width: 100%;" type="text" oninput="clearValid(this)" />
+                                    <div class="invalid-feedback" style="display:block">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="registerLogin">Body</label>
+                                    <textarea class="form-control" id="Body" value="@Model.Topic.Body" style="width:100%" placeholder="Body" oninput="clearValid(this)"></textarea>
+                                    <div class="invalid-feedback" style="display:block">
+                                    </div>
+                                </div>
+
+                                <div style="display: flex; flex-direction: row-reverse;">
+                                    <button type="button" class="btn btn-primary" onclick="updateTopic()">Save</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@*Update Post*@
+<div class="modal fade" tabindex="-1" id="dialogUpdatePost" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="card card-waves">
+                <div class="card-header">
+                    Update Post
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div class="datatable">
+                        <div class="row">
+                            <input id="PostId" hidden />
+                            <div id="UpdateTopic" class="col-lg-12">
+                                <div class="form-group">
+                                    <label for="registerLogin">Login</label>
+                                    <textarea class="form-control" id="BodyPost" style="width:100%" placeholder="Body" oninput="clearValid(this)"></textarea>
+                                    <div class="invalid-feedback" style="display:block">
+                                    </div>
+                                </div>
+
+                                <div style="display: flex; flex-direction: row-reverse;">
+                                    <button type="button" class="btn btn-primary" onclick="updatePost()">Save</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function updateTopicOpen() {
+        let textTitle = document.getElementById("textTitle");
+        let textBody = document.getElementById("textBody");
+        let title = document.getElementById("Title");
+        let body = document.getElementById("Body");
+        title.value = textTitle.innerText
+        body.value = textBody.innerText
+
+        clearValid(title);
+        clearValid(body);
+    }
+    function updateTopic() {
+        let title = document.getElementById("Title");
+        let body = document.getElementById("Body");
+        let topicId = document.getElementById("TopicId");
+
+        validateTopic(title, body);
+
+        let dialogModel = "UpdateTopic";
+        let idInputs = getIdInput(dialogModel);
+
+        var functionSome = Array.prototype.some;
+        var isCorrect = functionSome.call(idInputs, function (item) {
+            let element = document.getElementById(item);
+            return element.classList.contains("is-invalid");
+        });
+
+        if (isCorrect)
+            return;
+
+        let model = {
+            Title: title.value,
+            Body: body.value
+        }
+        model.TopicId = Number(topicId.value);
+        $.ajax({
+            type: "POST",
+            url: "/Topic/Update",
+            data: JSON.stringify(model),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                let textTitle = document.getElementById("textTitle");
+                let textBody = document.getElementById("textBody");
+                textTitle.innerText = data.title;
+                textBody.innerText = data.body;
+            },
+
+        });
+        $('#dialogUpdate').modal('hide')
+    }
+    function createPostElement(post, createDateTime) {
+        let username = document.getElementById("UserName").value;
+        let placeForElement = document.getElementById("PlaceForTopic");
+        let postElement = document.createElement("div")
+        let templateForContentOfPost =
+            ` <div class="b-comment">
+            <div postId="${post.id}" class="comment">
+                <div class="b-post-author ">
+                    <h4 id="TextUserLoginPost" class="avatar">
+                       ${username}
+                    </h4>
+                    <p class="comment-link" id="TextDatePost">${createDateTime}</p>
+                </div>
+
+                <div class="comment_text b-typo"><p id="TextBodyPost">${post.body}</p></div>                
+                    <button style="float: right; margin-bottom: 15px;" data-toggle="modal" data-target="#dialogUpdatePost" class="btn btn-primary" id="buttonUpdatePostOpen" onclick="updatePostOpen({id:'${post.id}',body:'${post.body}'})">Update</button>
+                
+            </div>`
+        postElement.innerHTML = templateForContentOfPost
+        placeForElement.appendChild(postElement)
+    }
+    function createPost() {
+        let body = document.getElementById("BodyCreate");
+        let topicId = document.getElementById("TopicId");
+
+        if (body.value == "") {
+            setValidationInElement(body, "is-invalid", "Title is emtpy");
+            return;
+        }
+
+        let model = {
+            TopicId: Number(topicId.value),
+            Body: body.value
+        }
+        $.ajax({
+            type: "POST",
+            url: "/Post/Create",
+            data: JSON.stringify(model),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                createPostElement(data.post, data.creationDate)
+            },
+
+        });
+        body.value = "";
+
+    }
+    function updatePostOpen(post) {
+        let bodyPost = document.getElementById("BodyPost");
+        let postId = document.getElementById("PostId");
+        postId.value = post.id;
+        bodyPost.value = post.body;
+
+    }
+    function updatePost() {
+        let bodyPost = document.getElementById("BodyPost");
+        let postId = document.getElementById("PostId");
+
+        if (bodyPost.value == "") {
+            setValidationInElement(bodyPost, "is-invalid", "Title is emtpy");
+            return;
+        }
+
+        let model = {
+            PostId: Number(postId.value),
+            Body: bodyPost.value
+        }
+        let postElement = document.querySelector(`[postid="${postId.value}"]`)
+        let postElementBody = postElement.querySelector(`[id="TextBodyPost"]`)
+        postElementBody.innerText = bodyPost.value
+        $.ajax({
+            type: "POST",
+            url: "/Post/Update",
+            data: JSON.stringify(model),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json"
+
+        });
+        $('#dialogUpdatePost').modal('hide')
+
+    }
+</script>
 

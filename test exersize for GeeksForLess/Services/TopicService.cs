@@ -13,6 +13,7 @@ namespace test_exersize_for_GeeksForLess.Services
 
         Task FillIndexTopicModel(IndexTopicModel model);
         Task<Topic> Create(CreateTopicModel model);
+        Task<bool> Update(UpdateTopicModel model);
     }
     public class TopicService : ITopicService
     {
@@ -35,8 +36,9 @@ namespace test_exersize_for_GeeksForLess.Services
             {
                 Body = model.Body,
                 Title = model.Title,
-                UserId = model.UserId
-
+                UserId = model.UserId,
+                CreationDate=DateTime.Now
+                
             };
 
             _reposetory.Topics.Add(topic);
@@ -46,7 +48,29 @@ namespace test_exersize_for_GeeksForLess.Services
 
         public async Task FillIndexTopicModel(IndexTopicModel model)
         {
-            model.Topic = _reposetory.Topics.Include(x=>x.Posts).SingleOrDefault(x=>x.Id==model.TopicId);            
+            model.Topic = _reposetory.Topics.Include(x=>x.Posts).ThenInclude(x=>x.User).SingleOrDefault(x=>x.Id==model.TopicId);            
+        }
+
+        public async Task<bool> Update(UpdateTopicModel model)
+        {
+            if (string.IsNullOrWhiteSpace(model.Body))
+                return false;
+
+            if (string.IsNullOrWhiteSpace(model.Title))
+                return false;
+
+            var topic = _reposetory.Topics.Include(x=>x.Posts).SingleOrDefault(x=>x.Id==model.TopicId);
+
+            if (topic == null)
+                return false;
+
+            topic.Title = model.Title;
+            topic.Body = model.Body;
+
+            _reposetory.Update(topic);
+            await _reposetory.SaveChangesAsync();
+
+            return true;
         }
     }
 }

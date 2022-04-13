@@ -43,3 +43,11 @@ function clearValid(element) {
     element.classList.remove("is-invalid");
     element.closest(".form-group").querySelector(".invalid-feedback").innerHTML = "";
 }
+//Topic
+function validateTopic(title, topic) {
+    if (title.value == "")
+        setValidationInElement(title, "is-invalid", "Title is emtpy");
+
+    if (topic.value == "")
+        setValidationInElement(topic, "is-invalid", "Topic is emtpy");
+}

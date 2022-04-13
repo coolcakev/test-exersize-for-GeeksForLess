@@ -7,24 +7,40 @@
 <div id="PlaceForTopic" class="text-center">
     @foreach (var topic in Model.Topics)
     {
-        <div >           
-          <a href="@Url.Action("Index","Topic",new { topicId=topic.Id})"><h2>@topic.Title</h2></a>  
-            <p>@topic.Body</p>
-        </div>
+
+        <article>
+            <div class="info">
+                <a class="author">
+                    @topic.User.UserLogin
+                </a>
+                <time class="date">@topic.CreationDate.ToString("dd MMMM yyyy")</time>
+            </div>
+
+            <h2>
+                <a style="text-decoration: none;" href="@Url.Action("Index","Topic",new { topicId=topic.Id})">@topic.Title</a>
+                <div class="g-comments-round">
+                    <div style="display: flex;align-content: center;justify-content: center;">
+                        <span>@topic.Posts.Count()</span>
+                    </div>
+                </div>
+            </h2>
+
+        </article>
+
     }
 </div>
 @if (checkForAuthenthification)
 {
-    <div id="CreateTopic">
+    <div id="CreateTopic" class="topic-form">
         <div class="form-group">
-            <label for="registerLogin">Login</label>
-            <input id="Title" placeholder="Title" style=" display: block; width: 100%;" type="text" oninput="clearValid(this)" />
+            <label for="registerLogin">Title</label>
+            <input class="form-control" id="Title" placeholder="Title" style=" display: block; width: 100%;" type="text" oninput="clearValid(this)" />
             <div class="invalid-feedback" style="display:block">
             </div>
         </div>
         <div class="form-group">
-            <label for="registerLogin">Login</label>
-            <textarea id="Body" style="width:100%;margin-top:20px" placeholder="Body" oninput="clearValid(this)"></textarea>
+            <label for="registerLogin">Body</label>
+            <textarea class="form-control" id="Body" style="width:100%;" placeholder="Body" oninput="clearValid(this)"></textarea>
             <div class="invalid-feedback" style="display:block">
             </div>
         </div>
@@ -36,19 +52,29 @@
 }
 
 <script>
-    function validateTopic(title, topic) {
-        if (title.value == "")
-            setValidationInElement(title, "is-invalid", "Title is emtpy");
-
-        if (topic.value == "")
-            setValidationInElement(title, "is-invalid", "Topic is emtpy");
-    }
-    function createTopicElement(topic, currentUrlTopic) {
+    function createTopicElement(topic, currentUrlTopic, creationDate) {
+        let userName = document.getElementById("UserName").value;
         let placeForElement = document.getElementById("PlaceForTopic");
         let topicElement = document.createElement("div")
-        let templateForContentOfTopic =
-            `<a href="${currentUrlTopic}"><h2>${topic.title}</h2></a>
-            <p>${topic.body}</p>`
+
+        let templateForContentOfTopic=`  <article>
+            <div class="info">
+                <a class="author">
+                    ${userName}
+                </a>
+                <time class="date">${creationDate}</time>
+            </div>
+
+            <h2>
+                <a style="text-decoration: none;" href="${currentUrlTopic}">${topic.title}</a>
+                <div class="g-comments-round">
+                    <div style="display: flex;align-content: center;justify-content: center;">
+                        <span>0</span>
+                    </div>
+                </div>
+            </h2>
+
+        </article>`
         topicElement.innerHTML = templateForContentOfTopic
         placeForElement.appendChild(topicElement)
     }
@@ -74,8 +100,8 @@
             Title: title.value,
             Body: body.value
         }
-        title.value=""
-        body.value=""
+        title.value = ""
+        body.value = ""
         $.ajax({
             type: "POST",
             url: "/Topic/Create",
@@ -83,7 +109,7 @@
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             success: function (data) {
-                createTopicElement(data.topic, data.currentUrlTopic)
+                createTopicElement(data.topic, data.currentUrlTopic, data.creationDate)
             },
 
         });
